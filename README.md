@@ -113,9 +113,8 @@ Go to **Runtime → Run All** and you're done!
 
 ## 📬 Connect with Me
 
-- 💼 [LinkedIn] https://linkedin.com/in/sharda-vatsal-bhat-73b037295
-- 🐙 [GitHub] https://github.com/Sharda2004196
+- Email - thakurrohitverma2005@gmail.com
 
 ---
 
-*Built by Sharda Vatsal Bhat — Aspiring AI/ML Engineer*
+*Built by Rohit Verma — Aspiring AI/ML Engineer*
