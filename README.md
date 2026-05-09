@@ -3,6 +3,8 @@
 A machine learning project that predicts house sale prices using regression models.  
 Built with Python, scikit-learn, and real-world housing data from Kaggle.
 
+Streamlit - https://housepriceprediction-2wyc6umfqxqvxkpxhrskgp.streamlit.app/
+
 ---
 
 ## 📌 Project Overview
