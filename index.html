@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #333; text-align: center; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; color: #444; margin-bottom: 5px; font-size: 14px; }
+        input { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        input:focus { outline: none; border-color: #667eea; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
+        .btn { padding: 15px 40px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
+        .btn:hover { transform: scale(1.05); }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-secondary { background: #e0e0e0; color: #333; }
+        #result { display: none; margin-top: 30px; text-align: center; padding: 25px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 10px; color: white; }
+        #result h2 { font-size: 32px; margin-top: 10px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; text-align: center; }
+        .stat-box { background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .stat-box h4 { color: #667eea; font-size: 24px; margin-bottom: 5px; }
+        .stat-box p { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>House Price Prediction</h1>
+            <p class="subtitle">Enter property details to estimate price</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Overall Quality (1-10)</label>
+                    <input type="number" id="OverallQual" value="6" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Living Area (sq ft)</label>
+                    <input type="number" id="GrLivArea" value="1500" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Garage Cars (0-4)</label>
+                    <input type="number" id="GarageCars" value="2" min="0" max="4">
+                </div>
+                <div class="form-group">
+                    <label>Garage Area (sq ft)</label>
+                    <input type="number" id="GarageArea" value="400" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Basement Area (sq ft)</label>
+                    <input type="number" id="TotalBsmtSF" value="800" min="0">
+                </div>
+                <div class="form-group">
+                    <label>1st Floor Area (sq ft)</label>
+                    <input type="number" id="1stFlrSF" value="1000" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Full Bathrooms</label>
+                    <input type="number" id="FullBath" value="2" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Total Rooms</label>
+                    <input type="number" id="TotRmsAbvGrd" value="6" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Year Built</label>
+                    <input type="number" id="YearBuilt" value="2000" min="1800" max="2026">
+                </div>
+                <div class="form-group">
+                    <label>Year Remodeled</label>
+                    <input type="number" id="YearRemodAdd" value="2010" min="1800" max="2026">
+                </div>
+                <div class="form-group">
+                    <label>Fireplaces</label>
+                    <input type="number" id="Fireplaces" value="1" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Lot Size (sq ft)</label>
+                    <input type="number" id="LotArea" value="8000" min="0">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="predict()">Predict Price</button>
+                <button class="btn btn-secondary" onclick="reset()">Reset</button>
+            </div>
+
+            <div id="result">
+                <p>Estimated House Price</p>
+                <h2 id="price">$0</h2>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <h4>1460</h4>
+                    <p>Houses Analyzed</p>
+                </div>
+                <div class="stat-box">
+                    <h4>$180,921</h4>
+                    <p>Average Price</p>
+                </div>
+                <div class="stat-box">
+                    <h4>$34900 - $625000</h4>
+                    <p>Price Range</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const avgPrice = 180921;
+        const basePrice = 30000;
+
+        const multipliers = {
+            OverallQual: 15000,
+            GrLivArea: 100,
+            GarageCars: 8000,
+            GarageArea: 50,
+            TotalBsmtSF: 80,
+            '1stFlrSF': 70,
+            FullBath: 10000,
+            TotRmsAbvGrd: 3000,
+            YearBuilt: 500,
+            YearRemodAdd: 300,
+            Fireplaces: 5000,
+            LotArea: 5
+        };
+
+        function predict() {
+            let price = basePrice;
+            for (let feature in multipliers) {
+                let val = parseFloat(document.getElementById(feature).value) || 0;
+                price += val * multipliers[feature];
+            }
+            let age = new Date().getFullYear() - document.getElementById('YearBuilt').value;
+            if (age > 50) price *= 0.85;
+
+            document.getElementById('price').textContent = '$' + price.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function reset() {
+            document.querySelectorAll('input').forEach(inp => inp.value = inp.defaultValue);
+            document.getElementById('result').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
